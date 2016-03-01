@@ -1,4 +1,4 @@
-package yelp;
+package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

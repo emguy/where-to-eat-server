@@ -13,7 +13,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import yelp.Restaurant;
+import model.Restaurant;
 import yelp.YelpAPI;
 
 public class DBConnection {
