@@ -11,7 +11,7 @@ import org.scribe.oauth.OAuthService;
 
 public class YelpAPI {
   private static final String API_HOST = "api.yelp.com";
-  private static final String DEFAULT_TERM = "chinese";
+  private static final String DEFAULT_TERM = "restaurant";
   private static final int SEARCH_LIMIT = 20;
   private static final String SEARCH_PATH = "/v2/search";
   private static final String CONSUMER_KEY = "SuHHtdrvmj-wLOE93MuyEg";

@@ -20,22 +20,9 @@ public class DBConnection {
   private Connection conn = null;
   private static final int MAX_RECOMMENDED_RESTAURANTS = 10;
   private static final int MIN_RECOMMENDED_RESTAURANTS = 3;
-  /**
-   * Make sure it is the only place to configure db related parameters
-   */
-  public static final String HOSTNAME = "localhost";
-  public static final String PORT = "3306";
-  public static final String DBNAME = "laiproject";
-  public static final String USERNAME = "root";
-  public static final String PASSWORD = "root";
-  public static final String URL;
-
-  static {
-    URL = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME + "?user=" + USERNAME + "&password=" + PASSWORD;
-  }
 
   public DBConnection() {
-    this(URL); // call the other constructor
+    this(DBSettings.URL); // call the other constructor
   }
 
   public DBConnection(String url) {

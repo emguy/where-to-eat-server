@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class DBImport {
   public static final int PORT = 3306;
   public static final String DB_HOST_NAME = "jdbc:mysql://localhost";
-  public static final String DB_NAME = "laiproject";
+  public static final String DB_NAME = "where-to-eat";
   public static final String DB_USER = "root";
   public static final String DB_PASSWORD = "root";
 
