@@ -39,8 +39,36 @@ public class DBConnection {
       try {
         conn.close();
       } catch (Exception e) {
-        /* ignored */}
+        e.printStackTrace();
+      }
     }
+  }
+
+  private void executeUpdateStatement(String query) {
+    if (conn == null) {
+      return;
+    }
+    try {
+      Statement stmt = (Statement) conn.createStatement();
+      System.out.println("\nDBConnection executing query:\n" + query);
+      stmt.executeUpdate(query);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private ResultSet executeFetchStatement(String query) {
+    if (conn == null) {
+      return null;
+    }
+    try {
+      Statement stmt = (Statement) conn.createStatement();
+      System.out.println("\nDBConnection executing query:\n" + query);
+      return stmt.executeQuery(query);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public JSONArray GetRestaurantsNearLoation(double lat, double lon) {
@@ -176,12 +204,8 @@ public class DBConnection {
 
   private Set<String> getCategories(String business_id) {
     try {
-      if (conn == null) {
-        return null;
-      }
-      Statement stmt = conn.createStatement();
       String sql = "SELECT categories from RESTAURANTS WHERE business_id='" + business_id + "'";
-      ResultSet rs = stmt.executeQuery(sql);
+      ResultSet rs = executeFetchStatement(sql);
       if (rs.next()) {
         Set<String> set = new HashSet<>();
         String[] categories = rs.getString("categories").split(",");
@@ -194,30 +218,22 @@ public class DBConnection {
         }
         return set;
       }
-    } catch (Exception e) { /* report an error */
+    } catch (Exception e) {
       System.out.println(e.getMessage());
     }
     return new HashSet<String>();
   }
 
-  private Set<String> getBusinessId(String category) {
+  private Set<String> getBusinessIdsByCategory(String category) {
     Set<String> set = new HashSet<>();
     try {
-      if (conn == null) {
-        return null;
-      }
-      Statement stmt = conn.createStatement();
-      // if category = Chinese, categories = Chinese, Korean, Japanese,
-      // it's a match
-      // like -> expression match % any one of %
       String sql = "SELECT business_id from RESTAURANTS WHERE categories LIKE '%" + category + "%'";
-      ResultSet rs = stmt.executeQuery(sql);
+      ResultSet rs = executeFetchStatement(sql);
       while (rs.next()) {
         String business_id = rs.getString("business_id");
         set.add(business_id);
       }
-      return set;
-    } catch (Exception e) { /* report an error */
+    } catch (Exception e) { 
       System.out.println(e.getMessage());
     }
     return set;
@@ -225,22 +241,15 @@ public class DBConnection {
 
   private JSONObject getRestaurantsById(String businessId) {
     try {
-      Statement stmt = conn.createStatement();
-      String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url from "
-          + "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
-      ResultSet rs = stmt.executeQuery(sql);
+      String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url from " + "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
+      ResultSet rs = executeFetchStatement(sql);
       if (rs.next()) {
-        JSONObject obj = new JSONObject();
-        obj.put("business_id", rs.getString("business_id"));
-        obj.put("name", rs.getString("name"));
-        obj.put("stars", rs.getFloat("stars"));
-        obj.put("latitude", rs.getFloat("latitude"));
-        obj.put("longitude", rs.getFloat("longitude"));
-        obj.put("full_address", rs.getString("full_address"));
-        obj.put("city", rs.getString("city"));
-        obj.put("state", rs.getString("state"));
-        obj.put("categories", DBImport.stringToJSONArray(rs.getString("categories")));
-        obj.put("image_url", rs.getString("image_url"));
+        Restaurant restaurant = new Restaurant(rs.getString("business_id"), rs.getString("name"),
+            rs.getString("categories"), rs.getString("city"), rs.getString("state"), rs.getString("full_address"),
+            rs.getDouble("stars"), rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getString("image_url"),
+            rs.getString("url"));
+        JSONObject obj = restaurant.toJSONObject();
+        //obj.put("is_visited", isVisited);
         return obj;
       }
     } catch (Exception e) { /* report an error */
@@ -279,7 +288,6 @@ public class DBConnection {
         }
       }
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return allCategories;
@@ -298,7 +306,7 @@ public class DBConnection {
       }
       Set<String> allRestaurants = new HashSet<>();
       for (String category : allCategories) {
-        Set<String> set = getBusinessId(category);
+        Set<String> set = getBusinessIdsByCategory(category);
         allRestaurants.addAll(set);
       }
       Set<JSONObject> diff = new HashSet<>();
@@ -315,7 +323,7 @@ public class DBConnection {
       if (count < MIN_RECOMMENDED_RESTAURANTS) {
         allCategories.addAll(getMoreCategories(allCategories));
         for (String category : allCategories) {
-          Set<String> set = getBusinessId(category);
+          Set<String> set = getBusinessIdsByCategory(category);
           allRestaurants.addAll(set);
         }
         for (String business_id : allRestaurants) {
