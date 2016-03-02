@@ -38,7 +38,7 @@ public class ResetDB {
 
       sql = "DROP TABLE IF EXISTS users";
       stmt.executeUpdate(sql);
-      
+
       // step 2 - Create tables
       sql = "CREATE TABLE restaurants " + "(business_id VARCHAR(255) NOT NULL, " + " name VARCHAR(255), "
           + "categories VARCHAR(255), " + "city VARCHAR(255), " + "state VARCHAR(255), " + "stars FLOAT,"
@@ -63,7 +63,7 @@ public class ResetDB {
       System.out.println("\nDBYelpImport executing query:\n" + sql);
       stmt.executeUpdate(sql);
 
-      System.out.println("DBYelpImport: import is done successfully.");
+      System.out.println("DBReset: Operation is done successfully.");
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
