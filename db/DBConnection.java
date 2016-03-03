@@ -136,7 +136,7 @@ public class DBConnection {
    */
   public void setVisitedRestaurants(String userId, List<String> businessIds) {
     for (String businessId : businessIds) {
-      String sql = "INSERT INTO USER_VISIT_HISTORY (`user_id`, `business_id`) VALUES (\"" + userId + "\", \""
+      String sql = "INSERT INTO HISTORY (`user_id`, `business_id`) VALUES (\"" + userId + "\", \""
           + businessId + "\")";
       executeUpdateStatement(sql);
     }
@@ -147,7 +147,7 @@ public class DBConnection {
    */
   public void unsetVisitedRestaurants(String userId, List<String> businessIds) {
     for (String businessId : businessIds) {
-      String sql = "DELETE FROM USER_VISIT_HISTORY WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
+      String sql = "DELETE FROM HISTORY WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
           + businessId + "\"";
       executeUpdateStatement(sql);
     }
@@ -159,7 +159,7 @@ public class DBConnection {
   public Set<String> getVisitedRestaurants(String userId) {
     Set<String> visitedRestaurants = new HashSet<String>();
     try {
-      String sql = "SELECT business_id from USER_VISIT_HISTORY WHERE user_id=" + userId;
+      String sql = "SELECT business_id from HISTORY WHERE user_id=" + userId;
       ResultSet rs = executeFetchStatement(sql);
       while (rs.next()) {
         String visited_restaurant = rs.getString("business_id");
@@ -169,32 +169,6 @@ public class DBConnection {
       e.printStackTrace();
     }
     return visitedRestaurants;
-  }
-
-  /**
-   * Get the list of categories associated with the restaurant from the database.
-   * 
-   * @return Set<String> the set of retrieved categories.
-   */
-  private Set<String> getCategories(String business_id) {
-    try {
-      String sql = "SELECT categories from RESTAURANTS WHERE business_id='" + business_id + "'";
-      ResultSet rs = executeFetchStatement(sql);
-      if (rs.next()) {
-        Set<String> set = new HashSet<>();
-        String[] categories = rs.getString("categories").split(",");
-        for (String category : categories) {
-          String category_trim = category.trim(); // ' Japanese ' -> 'Japanese'
-          if (!category_trim.equals("Restaurants")) {
-            set.add(category_trim);
-          }
-        }
-        return set;
-      }
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-    return new HashSet<String>();
   }
 
   /**
@@ -223,7 +197,7 @@ public class DBConnection {
    */
   public JSONObject getRestaurantsById(String businessId) {
     try {
-      String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url from "
+      String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url, url from "
           + "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
       ResultSet rs = executeFetchStatement(sql);
       if (rs.next()) {
@@ -239,6 +213,32 @@ public class DBConnection {
       System.out.println(e.getMessage());
     }
     return null;
+  }
+
+  /**
+   * Get the list of categories associated with the restaurant from the database.
+   * 
+   * @return Set<String> the set of retrieved categories.
+   */
+  private Set<String> getCategories(String business_id) {
+    try {
+      String sql = "SELECT categories from RESTAURANTS WHERE business_id='" + business_id + "'";
+      ResultSet rs = executeFetchStatement(sql);
+      if (rs.next()) {
+        Set<String> set = new HashSet<>();
+        String[] categories = rs.getString("categories").split(",");
+        for (String category : categories) {
+          String category_trim = category.trim(); // ' Japanese ' -> 'Japanese'
+          if (!category_trim.equals("Restaurants")) {
+            set.add(category_trim);
+          }
+        }
+        return set;
+      }
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+    return new HashSet<String>();
   }
 
   private Set<String> getMoreCategories(Set<String> existingCategories) {
@@ -269,6 +269,12 @@ public class DBConnection {
     return allCategories;
   }
 
+  /**
+   * This method determines a list of recommended restaurants.
+   * 
+   * @param userId
+   * @return An array of recommended restaurant objects.
+   */
   public JSONArray getRecommendations(String userId) {
     try {
       Set<String> visitedRestaurants = getVisitedRestaurants(userId);
