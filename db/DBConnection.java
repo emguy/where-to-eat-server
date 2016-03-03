@@ -21,6 +21,9 @@ public class DBConnection {
   private static final int MAX_RECOMMENDED_RESTAURANTS = 10;
   private static final int MIN_RECOMMENDED_RESTAURANTS = 3;
 
+  /**
+   * Default constructor
+   */
   public DBConnection() {
     this(DBSettings.URL); // call the other constructor
   }
@@ -34,6 +37,9 @@ public class DBConnection {
     }
   }
 
+  /**
+   *  Close the database connection.
+   */
   public void close() {
     if (conn != null) {
       try {
@@ -44,6 +50,9 @@ public class DBConnection {
     }
   }
 
+  /**
+   *  Execute an update query on the database.
+   */
   private void executeUpdateStatement(String query) {
     if (conn == null) {
       return;
@@ -57,6 +66,13 @@ public class DBConnection {
     }
   }
 
+  /**
+   *  Execute an fetch query on the database.
+   *  
+   *  @return an ResultSet object
+   *  
+   *  @see ResultSet
+   */
   private ResultSet executeFetchStatement(String query) {
     if (conn == null) {
       return null;
@@ -71,6 +87,14 @@ public class DBConnection {
     return null;
   }
 
+  /**
+   * Get a list of nearby restaurants from yelp according to the location
+   * 
+   * @param lat   the latitude
+   * @param long  the longitude
+   * @return      a JSONArray contains a list of restaurant JSON objects.
+   * 
+   */
   public JSONArray searchRestaurants(double lat, double lon) {
     try {
       YelpAPI api = new YelpAPI();
@@ -82,7 +106,7 @@ public class DBConnection {
       for (int i = 0; i < array.length(); i++) {
         JSONObject object = array.getJSONObject(i);
         Restaurant restaurant = new Restaurant(object);
-        String business_id = restaurant.getBusinessId();
+        String businessId = restaurant.getBusinessId();
         String name = restaurant.getName();
         String categories = restaurant.getCategories();
         String city = restaurant.getCity();
@@ -93,10 +117,9 @@ public class DBConnection {
         double longitude = restaurant.getLongitude();
         String imageUrl = restaurant.getImageUrl();
         String url = restaurant.getUrl();
-        String sql = "INSERT IGNORE INTO RESTAURANTS " + "VALUES ('" + business_id + "', \"" + name + "\", \""
-            + categories + "\", '" + city + "', '" + state + "', " + stars + ", \"" + fullAddress + "\", " + latitude
-            + "," + longitude + ",\"" + imageUrl + "\", \"" + url + "\")";
-        System.out.println(sql);
+        String sql = "INSERT IGNORE INTO restaurants " + "VALUES ('" + businessId + "', \"" + name + "\", \""
+            + categories + "\", \"" + city + "\", \"" + state + "\", " + stars + ", \"" + fullAddress + "\", "
+            + latitude + "," + longitude + ",\"" + imageUrl + "\", \"" + url + "\")";
         executeUpdateStatement(sql);
         JSONObject obj = restaurant.toJSONObject();
         list.add(obj);
@@ -108,6 +131,9 @@ public class DBConnection {
     return null;
   }
 
+  /**
+   * Insert a new restaurant entry into the user's visiting record.
+   */
   public void setVisitedRestaurants(String userId, List<String> businessIds) {
     for (String businessId : businessIds) {
       String sql = "INSERT INTO USER_VISIT_HISTORY (`user_id`, `business_id`) VALUES (\"" + userId + "\", \""
@@ -116,6 +142,9 @@ public class DBConnection {
     }
   }
 
+  /**
+   * Delete a restaurant entry from the user's visiting record.
+   */
   public void unsetVisitedRestaurants(String userId, List<String> businessIds) {
     for (String businessId : businessIds) {
       String sql = "DELETE FROM USER_VISIT_HISTORY WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
@@ -124,6 +153,9 @@ public class DBConnection {
     }
   }
 
+  /**
+   * Get a list of visited restaurants 
+   */
   public Set<String> getVisitedRestaurants(String userId) {
     Set<String> visitedRestaurants = new HashSet<String>();
     try {
@@ -139,6 +171,11 @@ public class DBConnection {
     return visitedRestaurants;
   }
 
+  /**
+   * Get the list of categories associated with the restaurant from the database.
+   * 
+   * @return Set<String> the set of retrieved categories.
+   */
   private Set<String> getCategories(String business_id) {
     try {
       String sql = "SELECT categories from RESTAURANTS WHERE business_id='" + business_id + "'";
@@ -160,6 +197,11 @@ public class DBConnection {
     return new HashSet<String>();
   }
 
+  /**
+   * Get the list of restaurants which falls under the specified category from the database.
+   * 
+   * @return Set<String> the set of retrieved restaurants.
+   */
   private Set<String> getBusinessIdsByCategory(String category) {
     Set<String> set = new HashSet<>();
     try {
@@ -175,7 +217,11 @@ public class DBConnection {
     return set;
   }
 
-  private JSONObject getRestaurantsById(String businessId) {
+  /**
+   * Get the restaurant with specified businessId from the database.
+   * 
+   */
+  public JSONObject getRestaurantsById(String businessId) {
     try {
       String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url from "
           + "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
