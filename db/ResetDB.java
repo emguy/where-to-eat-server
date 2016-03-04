@@ -33,33 +33,33 @@ public class ResetDB {
       String sql = "DROP TABLE IF EXISTS history";
       stmt.executeUpdate(sql);
 
-      sql = "DROP TABLE IF EXISTS restaurants";
+      sql = "DROP TABLE IF EXISTS RESTAURANTS";
       stmt.executeUpdate(sql);
 
-      sql = "DROP TABLE IF EXISTS users";
+      sql = "DROP TABLE IF EXISTS USERS";
       stmt.executeUpdate(sql);
 
       // step 2 - Create tables
-      sql = "CREATE TABLE restaurants " + "(business_id VARCHAR(255) NOT NULL, " + " name VARCHAR(255), "
+      sql = "CREATE TABLE RESTAURANTS " + "(business_id VARCHAR(255) NOT NULL, " + " name VARCHAR(255), "
           + "categories VARCHAR(255), " + "city VARCHAR(255), " + "state VARCHAR(255), " + "stars FLOAT,"
           + "full_address VARCHAR(255), " + "latitude FLOAT, " + " longitude FLOAT, " + "image_url VARCHAR(255),"
           + "url VARCHAR(255)," + " PRIMARY KEY ( business_id ))";
       stmt.executeUpdate(sql);
 
-      sql = "CREATE TABLE users " + "(user_id VARCHAR(255) NOT NULL, "
+      sql = "CREATE TABLE USERS " + "(user_id VARCHAR(255) NOT NULL, "
           + " first_name VARCHAR(255), last_name VARCHAR(255), " + " PRIMARY KEY ( user_id ))";
       stmt.executeUpdate(sql);
 
       sql = "CREATE TABLE history " + "(visit_history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
           + " user_id VARCHAR(255) NOT NULL , " + " business_id VARCHAR(255) NOT NULL, "
           + " last_visited_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (visit_history_id),"
-          + "FOREIGN KEY (business_id) REFERENCES restaurants(business_id),"
-          + "FOREIGN KEY (user_id) REFERENCES users(user_id))";
+          + "FOREIGN KEY (business_id) REFERENCES RESTAURANTS(business_id),"
+          + "FOREIGN KEY (user_id) REFERENCES USERS(user_id))";
       stmt.executeUpdate(sql);
 
       // Step 3: insert data
       // Create a fake user
-      sql = "INSERT INTO users " + "VALUES (\"1111\", \"John\", \"Smith\")";
+      sql = "INSERT INTO USERS " + "VALUES (\"1111\", \"John\", \"Smith\")";
       System.out.println("\nDBYelpImport executing query:\n" + sql);
       stmt.executeUpdate(sql);
 

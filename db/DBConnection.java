@@ -117,7 +117,7 @@ public class DBConnection {
         double longitude = restaurant.getLongitude();
         String imageUrl = restaurant.getImageUrl();
         String url = restaurant.getUrl();
-        String sql = "INSERT IGNORE INTO restaurants " + "VALUES ('" + businessId + "', \"" + name + "\", \""
+        String sql = "INSERT IGNORE INTO RESTAURANTS " + "VALUES ('" + businessId + "', \"" + name + "\", \""
             + categories + "\", \"" + city + "\", \"" + state + "\", " + stars + ", \"" + fullAddress + "\", "
             + latitude + "," + longitude + ",\"" + imageUrl + "\", \"" + url + "\")";
         executeUpdateStatement(sql);

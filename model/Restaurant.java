@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.DBImport;
-
 public class Restaurant {
   private String businessId;
   private String name;
