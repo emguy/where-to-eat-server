@@ -1,8 +1,6 @@
 package api;
 
 import java.io.IOException;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,17 +12,17 @@ import org.json.JSONArray;
 import db.DBConnection;
 
 /**
- * Servlet implementation class SearchRestaurants
+ * Servlet implementation class RecommendRestaurants
  */
-@WebServlet(urlPatterns = "/restaurants")
-public class SearchRestaurants extends HttpServlet {
+@WebServlet("/recommendation")
+public class RecommendRestaurants extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final DBConnection connection = new DBConnection();
 
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public SearchRestaurants() {
+  public RecommendRestaurants() {
     super();
   }
 
@@ -34,11 +32,9 @@ public class SearchRestaurants extends HttpServlet {
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     JSONArray array = new JSONArray();
-    Map<String, String[]> parameterMap = request.getParameterMap();
-    if (parameterMap.containsKey("lat") && parameterMap.containsKey("lon")) {
-      double lat = Double.parseDouble(request.getParameter("lat"));
-      double lon = Double.parseDouble(request.getParameter("lon"));
-      array = connection.searchRestaurants(lat, lon);
+    if (request.getParameterMap().containsKey("user_id")) {
+      String userId = request.getParameter("user_id");
+      array = connection.getRecommendations(userId);
     }
     RpcParser.writeOutput(response, array);
   }
