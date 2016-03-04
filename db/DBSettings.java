@@ -3,7 +3,7 @@ package db;
 public class DBSettings {
   public static final String DB_HOST_NAME = "localhost";
   public static final String DB_PORT = "3306";
-  public static final String DB_NAME = "where-to-eat";
+  public static final String DB_NAME = "wheretoeat";
   public static final String DB_USER = "root";
   public static final String DB_PASSWORD = "root";
   public static final String URL;
