@@ -10,7 +10,7 @@ algorithm.
 1. [Java SE 8 (It MUST BE Java 8, not Java 6, not Java 7)][1] 
 2. [Apache Tomcat][2]
 3. [MySQL][3]
-4. [MySQL][4]
+4. [MySQL JDBC Connector][4]
 5. [java-json][5]
 6. [scribe][6]
 
