@@ -66,7 +66,7 @@ a list of recommended restaurants.
 It takes one string argument `user_id`, and returns a JSON array which contains
 all restaurants in the user's visiting record.
 
-### post `/history`
+### POST `/history`
 
 It submits a JSON object with the following format
 ```JSON
@@ -83,7 +83,7 @@ where, `user_id` is user id, and the JSON array `visited` contains a list of
 received, all restaurants listed in the JSON array `visited` will be inserted
 into the user's database.
 
-### delete `/history`
+### DELETE `/history`
 
 It takes the same JSON object as the one for its POST method. Once this DELETE
 request is received, all restaurants matches the entries in the JSON array
